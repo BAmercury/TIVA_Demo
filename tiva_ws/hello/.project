@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>demo</name>
+	<name>hello</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -33,8 +33,12 @@
 	</linkedResources>
 	<variableList>
 		<variable>
+			<name>ORIGINAL_PROJECT_ROOT</name>
+			<value>file:/C:/ti/tivaware_c_series_2_1_4_178/examples/boards/ek-tm4c123gxl/hello/ccs</value>
+		</variable>
+		<variable>
 			<name>SW_ROOT</name>
-			<value>$%7BTI_PRODUCTS_DIR%7D/tivaware_c_series_2_1_4_178</value>
+			<value>$%7BPARENT-5-ORIGINAL_PROJECT_ROOT%7D</value>
 		</variable>
 	</variableList>
 </projectDescription>
