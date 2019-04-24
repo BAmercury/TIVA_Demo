@@ -10,6 +10,7 @@
 #include "driverlib/rom.h"
 #include "driverlib/uart.h"
 #include "utils/uartstdio.h"
+#include "driverlib/pwm.h"
 // The error routine that is called if the driver library encounters an error.
 //
 //*****************************************************************************
@@ -41,34 +42,37 @@ void configure_uart_serial(void)
 
     // Initialize the UART. Set baud rate,
     // The ui32Config is a logical OR of three values:
-    // Number of Data Bits | Number of Stop Bits | and Parity
+    // Parity| Number of Stop Bits | and Length of Data
     UARTConfigSetExpClk(UART0_BASE, SysCtlClockGet(), 115200, (UART_CONFIG_PAR_NONE |
             UART_CONFIG_STOP_ONE | UART_CONFIG_WLEN_8));
 
     // Finally, enable UART
     UARTEnable(UART0_BASE);
 
+}
+
+void configure_pwm_module(void)
+{
+
+    // Enable the Port Register for the PWM Pin that will be used (PB6)
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOB);
+    // Enable PWM0 Peripheral Module
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_PWM0);
+    // Wait till module is ready
+    while(!SysCtlPeripheralReady(SYSCTL_PERIPH_PWM0))
+    {
+    }
+    // Configure the PB6 Pin for PWM
+    GPIOPinConfigure(GPIO_PB6_M0PWM0);
+    GPIOPinTypePWM(GPIO_PORTB_BASE, GPIO_PIN_6);
 
 
-
-
-    // Use the internal 16 Mhz oscillator as the UART Clock Source
-    // We need a clock source for the baud rate generator
-    //UARTClockSourceSet(UART0_BASE, UART_CLOCK_PIOSC);
-
-    // Initialize the UART for console IO
-    //UARTStdioConfig(0, 115200, 16000000);
-
-
-    // Print confirmation message
-    //UARTprintf("UART is up and running\n");
-
+    // Configure the PWM Generator for count down mode
+    // With immediate updates to the parameters
+    PWMGenConfigure(PWM0_BASE, PWM_GEN_0, PWM_GEN_MODE_DOWN | PWM_GEN_MODE_NO_SYNC);
 }
 
 
-/**
- * main.c
- */
 int main(void)
 {
 
@@ -93,6 +97,27 @@ int main(void)
     // We can print the same thing if we have the uartstdio.c library
     //UARTprintf("Hello World\n");
 
+
+    // Output a PWM signal
+    configure_pwm_module();
+    //
+    // Set the period. For a 50 KHz frequency, the period = 1/50,000, or 20
+    // microseconds. For a 20 MHz clock, this translates to 400 clock ticks.
+    // Use this value to set the period.
+    //
+    PWMGenPeriodSet(PWM0_BASE, PWM_GEN_0, 400);
+    //
+    // Set the pulse width of PWM0 for a 100% duty cycle.
+    // 25% Duty Cycle: 100
+    PWMPulseWidthSet(PWM0_BASE, PWM_OUT_0, 400);
+    //
+    // Start the timers in generator 0.
+    //
+    PWMGenEnable(PWM0_BASE, PWM_GEN_0);
+    //
+    // Enable the outputs.
+    //
+    PWMOutputState(PWM0_BASE, (PWM_OUT_0_BIT | PWM_OUT_1_BIT), true);
 
 
     // Main Loop

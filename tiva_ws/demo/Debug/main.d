@@ -21,6 +21,7 @@ main.obj: C:/ti/tivaware_c_series_2_1_4_178/driverlib/rom.h
 main.obj: C:/ti/tivaware_c_series_2_1_4_178/driverlib/uart.h
 main.obj: C:/ti/tivaware_c_series_2_1_4_178/utils/uartstdio.h
 main.obj: C:/ti/ccs901/ccs/tools/compiler/ti-cgt-arm_18.12.1.LTS/include/stdarg.h
+main.obj: C:/ti/tivaware_c_series_2_1_4_178/driverlib/pwm.h
 
 ../main.c: 
 C:/ti/ccs901/ccs/tools/compiler/ti-cgt-arm_18.12.1.LTS/include/stdint.h: 
@@ -43,3 +44,4 @@ C:/ti/tivaware_c_series_2_1_4_178/driverlib/rom.h:
 C:/ti/tivaware_c_series_2_1_4_178/driverlib/uart.h: 
 C:/ti/tivaware_c_series_2_1_4_178/utils/uartstdio.h: 
 C:/ti/ccs901/ccs/tools/compiler/ti-cgt-arm_18.12.1.LTS/include/stdarg.h: 
+C:/ti/tivaware_c_series_2_1_4_178/driverlib/pwm.h: 
