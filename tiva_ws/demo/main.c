@@ -22,28 +22,56 @@ __error__(char *pcFilename, uint32_t ui32Line)
 #endif
 
 
-/**
- * main.c
- */
-int main(void)
+void configure_uart_serial(void)
 {
     // Enable the GPIO Peripheral used for the UART
     SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);
 
-    // Enable UART0
+    // Enable UART0 Module
     SysCtlPeripheralEnable(SYSCTL_PERIPH_UART0);
+    // Wait for the UART0 module to be ready
+    while(!SysCtlPeripheralReady(SYSCTL_PERIPH_UART0))
+    {
+    }
 
     // Configure GPIO Pins for UART Mode
     GPIOPinConfigure(GPIO_PA0_U0RX);
     GPIOPinConfigure(GPIO_PA1_U0TX);
     GPIOPinTypeUART(GPIO_PORTA_BASE, GPIO_PIN_0 | GPIO_PIN_1);
 
+    // Initialize the UART. Set baud rate,
+    // The ui32Config is a logical OR of three values:
+    // Number of Data Bits | Number of Stop Bits | and Parity
+    UARTConfigSetExpClk(UART0_BASE, SysCtlClockGet(), 115200, (UART_CONFIG_PAR_NONE |
+            UART_CONFIG_STOP_ONE | UART_CONFIG_WLEN_8));
+
+    // Finally, enable UART
+    UARTEnable(UART0_BASE);
+
+
+
+
+
     // Use the internal 16 Mhz oscillator as the UART Clock Source
     // We need a clock source for the baud rate generator
-    UARTClockSourceSet(UART0_BASE, UART_CLOCK_PIOSC);
+    //UARTClockSourceSet(UART0_BASE, UART_CLOCK_PIOSC);
 
     // Initialize the UART for console IO
-    UARTStdioConfig(0, 115200, 16000000);
+    //UARTStdioConfig(0, 115200, 16000000);
+
+
+    // Print confirmation message
+    //UARTprintf("UART is up and running\n");
+
+}
+
+
+/**
+ * main.c
+ */
+int main(void)
+{
+
 
 
     // Enable GPIO port used for on-board LED
@@ -56,22 +84,14 @@ int main(void)
     // Enable the GPIO Pins of Port F, Pin 1 is R, Pin 2 is G, Pin 3 is B
     GPIOPinTypeGPIOOutput(GPIO_PORTF_BASE, GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_3);
 
-    // Print some text
+    // Configure the UART Module
+    configure_uart_serial();
+    // Print an array of char's
+    char *s="hello world\n";
+    while (*s) UARTCharPut(UART0_BASE, *s++);
 
-    //
-    // Enable lazy stacking for interrupt handlers.  This allows floating-point
-    // instructions to be used within interrupt handlers, but at the expense of
-    // extra stack usage.
-    //
-    FPULazyStackingEnable();
-
-    // Set the clocking to run directly from the crystal
-    SysCtlClockSet(SYSCTL_SYSDIV_4 | SYSCTL_USE_PLL | SYSCTL_XTAL_16MHZ |SYSCTL_OSC_MAIN);
-
-
-
-    // Hello!
-    UARTprintf("Hello dude\n");
+    // We can print the same thing if we have the uartstdio.c library
+    //UARTprintf("Hello World\n");
 
 
 
@@ -90,6 +110,7 @@ int main(void)
         GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_3, GPIO_PIN_3);
         // Delay
         SysCtlDelay(SysCtlClockGet() / 10 / 3);
+
     }
 
 
