@@ -146,7 +146,7 @@ int main(void)
     // Enable the ADC Module
     configure_adc();
 
-    // Output a PWM signal
+    // Enable the PWM Module
     configure_pwm_module();
     //
     // Set the period. For a 50 KHz frequency, the period = 1/50,000, or 20
